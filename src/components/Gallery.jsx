@@ -1,83 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import useGallery from '../hooks/useGallery';
 
 const Gallery = () => {
-  const [images, setImages] = useState([]);
-  const [favorites, setFavorites] = useState(new Set());
-
-  useEffect(() => {
-    const fetchImages = async () => {
-      const { data } = await axios.get('http://localhost:3000/api/v1/images', {
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-      setImages(data);
-      checkFavorites(data.map(image => image.id));
-    };
-
-    fetchImages();
-  }, []);
-
-  const checkFavorites = async (imageIds) => {
-    const checks = imageIds.map(id => 
-        axios.post('http://localhost:3000/api/v1/find_favorite', {
-          favorite: {
-            favoritable_type: 'Image',
-            favoritable_id: id
-          }
-        }, {
-          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-        })
-      );
-
-    
-    try {
-      const results = await Promise.all(checks);
-      const newFavorites = new Set();
-      results.forEach((result, index) => {
-        if (result.data.exists) {
-          newFavorites.add(imageIds[index]);
-        }
-      });
-      setFavorites(newFavorites);
-    } catch (error) {
-      console.error('Failed to check favorites:', error);
-    }
-  };
-
-  const handleFavorite = async (id) => {
-    const isFavorite = favorites.has(id);
-    const method = isFavorite ? 'delete' : 'post';
-    const url = isFavorite ? 'http://localhost:3000/api/v1/remove_favorite' : 'http://localhost:3000/api/v1/favorites';
-
-    try {
-      await axios({
-        method,
-        url,
-        data: {
-          favorite: {
-            favoritable_type: 'Image',
-            favoritable_id: id
-          }
-        },
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      });
-
-      setFavorites(current => {
-        const newFavorites = new Set(current);
-        if (newFavorites.has(id)) {
-          newFavorites.delete(id);
-        } else {
-          newFavorites.add(id);
-        }
-        return newFavorites;
-      });
-    } catch (error) {
-      console.error('Failed to toggle favorite:', error);
-    }
-  };
+  const { images, favorites, handleFavorite } = useGallery();
 
   const settings = {
     dots: true,
@@ -97,13 +25,13 @@ const Gallery = () => {
             <div className="text-center mt-2">
               <h3 className="text-lg font-bold">{image.title}</h3>
               <p className="text-sm">{image.description}</p>
-            <button
-              onClick={() => handleFavorite(image.id)}
-              className={`bottom-2 right-2 p-2 rounded-lg shadow-md transition duration-300 ease-in-out mt-3
-              ${favorites.has(image.id) ? 'bg-red-500 hover:bg-red-700 text-white' : 'bg-blue-200 hover:bg-blue-400 text-blue-800'}`}
-            >
-              {favorites.has(image.id) ? 'Quitar de favoritos' : 'Añadir a favoritos' }
-            </button>
+              <button
+                onClick={() => handle_favorite(image.id)}
+                className={`bottom-2 right-2 p-2 rounded-lg shadow-md transition duration-300 ease-in-out mt-3
+                ${favorites.has(image.id) ? 'bg-red-500 hover:bg-red-700 text-white' : 'bg-blue-200 hover:bg-blue-400 text-blue-800'}`}
+              >
+                {favorites.has(image.id) ? 'Quitar de favoritos' : 'Añadir a favoritos'}
+              </button>
             </div>
           </div>
         </div>

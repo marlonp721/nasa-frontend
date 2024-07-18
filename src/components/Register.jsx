@@ -1,57 +1,17 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import useRegister from '../hooks/useRegister';
 
 const Register = () => {
-  const [credentials, setCredentials] = useState({ email: '', password: '', password_confirmation: '' });
-  const navigate = useNavigate();
-  const [error, setError] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
-  const handleRegister = async (event) => {
-    event.preventDefault();
-  
-    if (!credentials.email || !credentials.password || credentials.password !== credentials.password_confirmation) {
-      setError('Por favor, asegúrese de que todos los campos estén completos y que las contraseñas coincidan.');
-      return;
-    }
-  
-    const user = {
-      email: credentials.email,
-      password: credentials.password,
-      password_confirmation: credentials.password_confirmation
-    };
-  
-    try {
-      const response = await axios.post('http://localhost:3000/api/v1/users', { user });
-      navigate('/');
-    } catch (error) {
-      setError('Error al intentar registrar el usuario. Por favor, intente de nuevo.');
-      console.error('Registration failed:', error.response ? error.response.data : error);
-    }
-  };
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setCredentials(prev => {
-      const newCredentials = { ...prev, [name]: value };
-      if (newCredentials.password && newCredentials.password_confirmation && newCredentials.password !== newCredentials.password_confirmation) {
-        setError('Las contraseñas no coinciden.');
-      } else {
-        setError('');
-      }
-      return newCredentials;
-    });
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
+  const {
+    credentials,
+    handleChange,
+    handleRegister,
+    error,
+    showPassword,
+    showConfirmPassword,
+    togglePasswordVisibility,
+    toggleConfirmPasswordVisibility
+  } = useRegister();
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-200">

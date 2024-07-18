@@ -1,8 +1,23 @@
-# React + Vite
+# README
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+* Node version
 
-Currently, two official plugins are available:
+Node 18.20.4 y React 18.3.1
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+* Asegurarse de user node 18 si utiliza NVM poner este paso, sino saltearselo
+
+```console
+nvm use 18
+```
+
+* Instalar dependencias
+
+```console
+yarn install
+```
+
+* Correr el proyecto
+
+```console
+yarn dev
+```
