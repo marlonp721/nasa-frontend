@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react';
+import axios from '../axiosConfig';
 import { useNavigate } from 'react-router-dom';
 
 const useRegister = () => {
@@ -28,14 +28,15 @@ const useRegister = () => {
   const handleChange = (event) => {
     const { name, value } = event.target;
     setCredentials(prev => ({ ...prev, [name]: value }));
-    if (name === 'password' || name === 'password_confirmation') {
-      if (credentials.password !== credentials.password_confirmation) {
-        setError('Las contraseñas no coinciden.');
-      } else {
-        setError('');
-      }
-    }
   };
+
+  useEffect(() => {
+    if (credentials.password !== credentials.password_confirmation) {
+      setError('Las contraseñas no coinciden.');
+    } else {
+      setError('');
+    }
+  }, [credentials.password, credentials.password_confirmation]);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);

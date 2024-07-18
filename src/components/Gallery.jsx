@@ -26,7 +26,7 @@ const Gallery = () => {
               <h3 className="text-lg font-bold">{image.title}</h3>
               <p className="text-sm">{image.description}</p>
               <button
-                onClick={() => handle_favorite(image.id)}
+                onClick={() => handleFavorite(image.id)}
                 className={`bottom-2 right-2 p-2 rounded-lg shadow-md transition duration-300 ease-in-out mt-3
                 ${favorites.has(image.id) ? 'bg-red-500 hover:bg-red-700 text-white' : 'bg-blue-200 hover:bg-blue-400 text-blue-800'}`}
               >

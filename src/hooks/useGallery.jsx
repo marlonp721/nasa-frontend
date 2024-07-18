@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../axiosConfig';
 
 const useGallery = () => {
   const [images, setImages] = useState([]);
@@ -21,28 +21,29 @@ const useGallery = () => {
     }
   };
 
-  const checkFavorites = async (imageIds) => {
-    const checks = imageIds.map(id =>
-      axios.post('/find_favorite', {
-        favorite: {
-          favoritable_type: 'Image',
-          favoritable_id: id
-        },
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      })
-    );
-
+  const checkFavorites = async (asteroidIds) => {
     try {
+      const checks = asteroidIds.map(id =>
+        axios.post('/find_favorite', {
+          favorite: {
+            favoritable_type: 'Image',
+            favoritable_id: id
+          }
+        }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
+      );
+
       const results = await Promise.all(checks);
       const newFavorites = new Set();
       results.forEach((result, index) => {
         if (result.data.exists) {
-          newFavorites.add(imageIds[index]);
+          newFavorites.add(asteroidIds[index]);
         }
       });
       setFavorites(newFavorites);
     } catch (error) {
-      console.error('Failed to check favorites:', error);
+      console.error('Error checking favorites:', error);
     }
   };
 

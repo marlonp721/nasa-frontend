@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../axiosConfig';
 
 const useAsteroids = () => {
   const [asteroids, setAsteroids] = useState([]);
@@ -36,24 +36,29 @@ const useAsteroids = () => {
   };
 
   const checkFavorites = async (asteroidIds) => {
-    const checks = asteroidIds.map(id => 
-      axios.post('/find_favorite', {
-        favorite: {
-          favoritable_type: 'Asteroid',
-          favoritable_id: id
-        },
-        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
-      })
-    );
+    try {
+      const checks = asteroidIds.map(id =>
+        axios.post('/find_favorite', {
+          favorite: {
+            favoritable_type: 'Asteroid',
+            favoritable_id: id
+          }
+        }, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+        })
+      );
 
-    const results = await Promise.all(checks);
-    const newFavorites = new Set();
-    results.forEach((result, index) => {
-      if (result.data.exists) {
-        newFavorites.add(asteroidIds[index]);
-      }
-    });
-    setFavorites(newFavorites);
+      const results = await Promise.all(checks);
+      const newFavorites = new Set();
+      results.forEach((result, index) => {
+        if (result.data.exists) {
+          newFavorites.add(asteroidIds[index]);
+        }
+      });
+      setFavorites(newFavorites);
+    } catch (error) {
+      console.error('Error checking favorites:', error);
+    }
   };
 
   const handleFavorite = async (asteroidId) => {
